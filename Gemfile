@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 
 gem 'rails', '4.2.0'
-gem 'sqlite3'
 gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
@@ -47,5 +46,6 @@ group :development, :test do
   gem 'meta_request', '~> 0.3.4'            # required for RailsPanel (chrome extension) to work
   gem 'bullet', '~> 4.14.0'                 # tests for N+1 query problems
   gem 'pry-rails', '~> 0.3.2'
-end
 
+  gem 'rails_12factor', group: :production
+end
