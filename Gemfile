@@ -12,7 +12,6 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'font-awesome-rails'
 gem 'pg', '~> 0.17.1'                       # Postgres database
-gem 'sqlite3'
 
 
 gem 'echonest-ruby-api', '~> 0.8.0'
@@ -41,6 +40,8 @@ group :development, :test do
   gem 'spring'
   gem 'rails-dev-tweaks', '~> 1.1'
   gem 'quiet_assets', '~> 1.0.3'  
+
+  gem 'sqlite3'
   
   # Debugging tools
   gem 'better_errors', '~> 2.0.0'           # improved error information
