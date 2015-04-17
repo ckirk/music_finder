@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
 
-  root 'main#search'
+  root 'main#index'
 
-  #get 'user'     => 'main#user'
+  get 'search'   => 'main#search'
 
 
   # The priority is based upon order of creation: first created -> highest priority.
