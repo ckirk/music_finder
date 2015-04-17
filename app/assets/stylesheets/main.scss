@@ -1,0 +1,96 @@
+// Place all the styles related to the main controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+html, body {
+	margin: 0px;
+	padding: 0px;
+	min-height: 100%;
+	height: 100%;
+	background-color: #eff4f6;
+	box-sizing: border-box;
+	font-family: 'brandon-grotesque', Helvetica, Arial, sans-serif;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+#wrapper {
+	min-height: 100%;
+	margin-bottom: -90px; /* equal to footer height */
+	background-color: #eff4f6;
+	&:after {
+		content: "";
+		display: block;
+		height: 90px;
+	}
+	#right {
+		background-color: #eff4f6;
+		margin-left: 250px;
+		min-height: 300px;
+
+		#profile {
+			width: 100%;
+			height: 205px;
+			background-color: #2b2e31;
+		}
+		#main {
+			margin-right: 260px;
+			padding: 30px;
+			.new_post {
+				margin-top: 100px;
+				height: 90px;
+				background-color: #fff;
+				margin-bottom: 20px;
+				padding: 20px;
+				padding-right: 10px;
+				white-space: nowrap;
+				overflow: hidden;
+				#input_form {
+					height: 100%;
+					overflow: hidden;
+					input {
+						height: 50px;
+						width: 100%;
+						border-radius: 5px;
+						padding: 20px;
+						background-color: #f2f6f9;
+						border: none;
+						font-size: .8em;
+					}
+				}
+				#submit_button {
+					height: 100%;
+					width: 50px;
+					float: right;
+					.fa, .icon {
+						line-height: 50px;
+						cursor: pointer;
+						text-align: center;
+						display: block;
+						font-size: 2em;
+						color: #c5d0da;
+					}
+				}
+				::-webkit-input-placeholder {
+					color: #bfced9;
+				}
+			}
+		}
+	}
+}
+
+.tag_button {
+	background-color: #c5d0da;
+	border: none;
+	color: #fff;
+	height: 20px;
+	border-radius: 5px;
+	cursor: pointer;
+}
