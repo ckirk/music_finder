@@ -11,6 +11,8 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'font-awesome-rails'
+gem 'pg', '~> 0.17.1'                       # Postgres database
+gem 'sqlite3'
 
 
 gem 'echonest-ruby-api', '~> 0.8.0'
@@ -46,6 +48,9 @@ group :development, :test do
   gem 'meta_request', '~> 0.3.4'            # required for RailsPanel (chrome extension) to work
   gem 'bullet', '~> 4.14.0'                 # tests for N+1 query problems
   gem 'pry-rails', '~> 0.3.2'
+end
 
-  gem 'rails_12factor', group: :production
+group :production do
+  gem 'rails_12factor'
+  gem 'unicorn'
 end

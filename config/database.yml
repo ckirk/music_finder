@@ -23,3 +23,35 @@ test:
 production:
   <<: *default
   database: db/production.sqlite3
+
+
+
+  # development:
+  #   adapter: postgresql
+  #   encoding: unicode
+  #   database: tubulr_development
+  #   pool: 5
+  #   username: <%= ENV['database_username'] %>
+  #   password:
+  #   timeout: 5000
+  #   host: localhost
+
+  # test:
+  #   adapter: postgresql
+  #   encoding: unicode
+  #   database: tubulr_test
+  #   pool: 5
+  #   username: <%= ENV['database_username'] %>
+  #   password:
+  #   timeout: 5000
+  #   host: localhost
+
+  # production:
+  #   adapter: postgresql
+  #   encoding: unicode
+  #   database: tubulr_production
+  #   pool: 5
+  #   username: <%= ENV['database_username'] %>
+  #   password:
+  #   timeout: 5000
+  #   host: localhost
