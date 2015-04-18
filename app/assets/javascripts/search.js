@@ -17,7 +17,8 @@ $(document).ready(function(){
 		$('.yt_results').html('');
 	  var artist = $(this).data('artist');
 	  var track = $(this).data('track');
-	  listYtResults(artist, track);
+	  var originalDuration = $(this).data('duration');
+	  searchYouTube(artist, track, originalDuration);
 	});
 
 	// Play selected YT video from YT search results
@@ -39,9 +40,9 @@ function playSong(videoId) {
 // YouTube Search ////////////////
 //////////////////////////////////
 
-function listYtResults(artist, track) {
+function searchYouTube(artist, track, originalDuration) {
 	var include = "intitle:("+artist+' '+track+")";
-	var exclude = " -intitle:live -intitle:cover -intitle:acoustic -intitle:remix -intitle:'full album' ";
+	var exclude = " -intitle:live -intitle:cover -intitle:acoustic -intitle:remix";
 	var lesson =  " -intitle:tutorial -intitle:lesson -intitle:learn -intitle:'how to play' ";
 
 	// lyrics, live, cover, acoustic, "full album", remix
@@ -53,7 +54,7 @@ function listYtResults(artist, track) {
 	var type = "&type=video";
 	var videoEmbeddable = "&videoEmbeddable=true";
 	var category = '&videoCategoryId=10';
-	var searchQuery = "&q=" + include + exclude + lesson;
+	var searchQuery = "&q=" + include + exclude + lesson + "";
 	var order = "&order=relevance"; // relevance(default), date, rating, title, videoCount, viewCount
 	var maxResults = "&maxResults=10"; // 0-50
 
@@ -72,17 +73,20 @@ function listYtResults(artist, track) {
     	for (var i = 0; i < results.length; i++) {
     		foundVideoIds.push(results[i].id.videoId);
     	}
-    	playSong(results[0].id.videoId); // play first returned song
-    	fetchVideoData(foundVideoIds); // get more data for each video
+    	fetchYouTubeData(foundVideoIds, originalDuration); // get more data for each video
     }
   });
 }
+
 
 //////////////////////////////////
 // YouTube Video Info ////////////
 //////////////////////////////////
 
-function fetchVideoData(foundVideoIds){
+function fetchYouTubeData(foundVideoIds, originalDuration){
+	var durationTolerance = 30; // secs
+	YouTubeResults = [];
+
 	var videoIds = "&id=" + foundVideoIds.join();
 	var apiKey = "key=" + "AIzaSyBZwPgx_XPordiPUIxzetxwy5CLwFZTb40";
 	var baseURL = "https://www.googleapis.com/youtube/v3/videos?";
@@ -94,20 +98,36 @@ function fetchVideoData(foundVideoIds){
 	  success: function(data) {
 	  	results = data.items;
 	  	for (var i = 0; i < results.length; i++) {
+	  		var duration = results[i].contentDetails.duration; // PT4M15S
 	  		var video = {
 	  			title: results[i].snippet.title,
 	  			id: results[i].id,
 	  			datePublished: results[i].snippet.publishedAt,
 	  			thumbnail: results[i].snippet.thumbnails.medium.url,
-	  			categoryId: results[i].snippet.categoryId, // 10 is likely music
-	  			duration: results[i].contentDetails.duration, // PT4M15S
+	  			categoryId: results[i].snippet.categoryId, // 10 = music
+	  			duration: convertDuration(duration), 
 	  			viewCount: results[i].statistics.viewCount,
 	  			likeCount: results[i].statistics.likeCount
 	  		}
-		   addYtResult(video);
+	  		YouTubeResults.push(video);
+	  		if ( isBetween(originalDuration, video.duration, durationTolerance) ) {
+	  			addYtResult(video);
+	  		}
+	  		playSong(YouTubeResults[0].id); // play first returned song
 	  	}
 	  }
 	});
+}
+
+// tests if video duration is close to a target value +- a tolerance (in secs)
+function isBetween(duration, target, tolerance) {  // tolerance in secs
+	var min = target - tolerance;
+	var max = target + tolerance;
+	if ( duration >= min && duration <= max ) {
+		return true;
+	} else {
+		return false;
+	}
 }
 
 function addYtResult(video) {
@@ -121,6 +141,22 @@ function addYtResult(video) {
 }
 
 // <div class="thumbnail" style="background: url(<%= feed_item.video.thumbnail_medium %>) no-repeat center center; background-size: cover;">
+
+
+// convert duration from PTMS -> seconds
+
+function convertDuration(input) {
+	var regex = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
+	var hours = 0, minutes = 0, seconds = 0, totalseconds;
+	if (regex.test(input)) {
+	  var matches = regex.exec(input);
+	  if (matches[1]) hours = Number(matches[1]);
+	  if (matches[2]) minutes = Number(matches[2]);
+	  if (matches[3]) seconds = Number(matches[3]);
+	  totalseconds = hours * 3600  + minutes * 60 + seconds;
+	}
+	return totalseconds;
+}
 
 
 //////////////////////////////////
@@ -159,7 +195,7 @@ function trackSearch(query) {
 
 function addTrackResult(track) {
 	$searchResult = $('<li class="search_result">');
-	$searchResult.append('<h2>' + track.title + '</h2><h3>' + track.artist + '</h3>');
+	$searchResult.append('<h2>' + track.title + '</h2><h3>' + track.artist + '</h3><h3>Duration: ' + track.duration + '</h3>');
 
 	$searchResult.data("artist", track.artist);
 	$searchResult.data("track", track.title);
