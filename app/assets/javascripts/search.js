@@ -40,16 +40,23 @@ function playSong(videoId) {
 //////////////////////////////////
 
 function listYtResults(artist, track) {
+	var include = "intitle:("+artist+' '+track+")";
+	var exclude = " -intitle:live -intitle:cover -intitle:acoustic -intitle:remix -intitle:'full album' ";
+	var lesson =  " -intitle:tutorial -intitle:lesson -intitle:learn -intitle:'how to play' ";
+
+	// lyrics, live, cover, acoustic, "full album", remix
+	// "how to play", tutorial, lesson, learn
+
 	var baseURL = "https://www.googleapis.com/youtube/v3/search?";
 	var apiKey = "key=" + "AIzaSyBZwPgx_XPordiPUIxzetxwy5CLwFZTb40";
 	var part = "&part=snippet,id"; // options: https://developers.google.com/youtube/v3/docs/videos
 	var type = "&type=video";
-	var searchQuery = "&q=" + artist + ' ' + track;
+	var videoEmbeddable = "&videoEmbeddable=true";
+	var category = '&videoCategoryId=10';
+	var searchQuery = "&q=" + include + exclude + lesson;
+	var order = "&order=relevance"; // relevance(default), date, rating, title, videoCount, viewCount
 	var maxResults = "&maxResults=10"; // 0-50
-	var videoEmbeddable = "true";
 
-	//var videoCategoryId = '?';
-	//var order = "&order="; // relevance(default), date, rating, title, videoCount, viewCount
 	//var topicId = "&topicId=";
   //var publishedAfter = "&publishedAfter=" + "1970-01-01T00:00:00Z";
 
@@ -57,7 +64,7 @@ function listYtResults(artist, track) {
 	// https://www.googleapis.com/youtube/v3/search?part=snippet&q=radiohead+kid+a&key={YOUR_API_KEY}
 
   $.ajax({
-    url: baseURL + apiKey + part + type + searchQuery + maxResults, // + videoEmbeddable,
+    url: baseURL + apiKey + part + type + category + videoEmbeddable + searchQuery + order + maxResults,
     async: false,
     success: function(data) {
     	results = data.items;
@@ -92,9 +99,10 @@ function fetchVideoData(foundVideoIds){
 	  			id: results[i].id,
 	  			datePublished: results[i].snippet.publishedAt,
 	  			thumbnail: results[i].snippet.thumbnails.medium.url,
+	  			categoryId: results[i].snippet.categoryId, // 10 is likely music
 	  			duration: results[i].contentDetails.duration, // PT4M15S
 	  			viewCount: results[i].statistics.viewCount,
-	  			likeCount: results[i].statistics.likeCount,
+	  			likeCount: results[i].statistics.likeCount
 	  		}
 		   addYtResult(video);
 	  	}
@@ -107,44 +115,13 @@ function addYtResult(video) {
 	$searchResult.data("id", video.id);
 	$searchResult.append('<div class="thumbnail" style="background: url(' + video.thumbnail + ') no-repeat center center; background-size: cover;">');
 	$videoInfo = $('<div class="info">');
-	$videoInfo.append('<h2>' + video.title + '</h2><h3>Date Published: ' + video.datePublished + '</h3><h3>Duration: ' + video.duration + '</h3><h3>View Count: ' + video.viewCount + '</h3><h3>Like Count: ' + video.likeCount + '</h3>');
+	$videoInfo.append('<h2>' + video.title + '</h2><h3>Date Published: ' + video.datePublished + '</h3><h3>Duration: ' + video.duration + '</h3><h3>View Count: ' + video.viewCount + '</h3><h3>Like Count: ' + video.likeCount + '</h3><h3>Category ID: ' + video.categoryId + '</h3>');
 	$searchResult.append($videoInfo);
 	$('.yt_results').append($searchResult);
 }
 
 // <div class="thumbnail" style="background: url(<%= feed_item.video.thumbnail_medium %>) no-repeat center center; background-size: cover;">
 
-//////////////////////////////////
-// ARTIST RESULTS (EchoNest) /////
-//////////////////////////////////
-
-function artistSearch(query) {
-	var apiKey = "KIUBY9CGMLEUODRPI";
-	var searchType = "artist/";
-  var baseURL = "http://developer.echonest.com/api/v4/";
-  var searchQuery = "&name=" + query;
-  var numResults = 10; // 1-100, 15 default
-  var sort = "&sort=familiarity-desc";
-
-  // http://developer.echonest.com/api/v4/artist/search?api_key=FILDTEOIK2HBORODV&name=radiohead
-
-  $.ajax({
-    url: baseURL + searchType + "search?api_key=" + apiKey + sort + searchQuery,
-    async: false,
-    success: function(data) {
-    	artists = data.response.artists;
-    	for (var i = 0; i < artists.length; i++) {
-  	    addArtistResult(artists[i].name);
-  	    console.log(artists[i].name);
-    	}
-    }
-  });
-}
-
-function addArtistResult(name) {
-	$searchResult = '<li><h2>' + name + '</h2></li>'
-	$('.artist_results').append($searchResult);
-}
 
 //////////////////////////////////
 // TRACK RESULTS (EchoNest) //////
@@ -154,9 +131,9 @@ function trackSearch(query) {
 	var apiKey = "search?api_key=" + "KIUBY9CGMLEUODRPI";
 	var baseURL = "http://developer.echonest.com/api/v4/";
 	var searchType = "song/";
-	var sort = "&sort=artist_familiarity-desc"; //artist_hotttnesss-desc, song_hotttnesss-desc, 
+	var sort = "&sort=song_hotttnesss-desc"; //sort=artist_familiarity-desc, artist_hotttnesss-desc, song_hotttnesss-desc, 
   var numResults = "&results=10"; // 1-100, 15 default
-  var bucket = "&bucket=id:musicbrainz&bucket=tracks&bucket=audio_summary";
+  var bucket = "&bucket=audio_summary" + "&bucket=id:musicbrainz&bucket=tracks";
   var song_type = "&song_type=studio";
   var searchQuery = "&title=" + query; // title, artist, combined
 
@@ -190,6 +167,40 @@ function addTrackResult(track) {
 
 	$('.track_results').append($searchResult);
 }
+
+
+//////////////////////////////////
+// ARTIST RESULTS (EchoNest) /////
+//////////////////////////////////
+
+function artistSearch(query) {
+	var apiKey = "KIUBY9CGMLEUODRPI";
+	var searchType = "artist/";
+  var baseURL = "http://developer.echonest.com/api/v4/";
+  var searchQuery = "&name=" + query;
+  var numResults = 10; // 1-100, 15 default
+  var sort = "&sort=familiarity-desc";
+
+  // http://developer.echonest.com/api/v4/artist/search?api_key=FILDTEOIK2HBORODV&name=radiohead
+
+  $.ajax({
+    url: baseURL + searchType + "search?api_key=" + apiKey + sort + searchQuery,
+    async: false,
+    success: function(data) {
+    	artists = data.response.artists;
+    	for (var i = 0; i < artists.length; i++) {
+  	    addArtistResult(artists[i].name);
+  	    console.log(artists[i].name);
+    	}
+    }
+  });
+}
+
+function addArtistResult(name) {
+	$searchResult = '<li><h2>' + name + '</h2></li>'
+	$('.artist_results').append($searchResult);
+}
+
 
 //////////////////////////////////
 // TRACK RESULTS (MusicBrainz) ///
@@ -280,14 +291,13 @@ function addAlbumResult(artist, album) {
 // this -that
 // this +that //forced word
 // "this that"
-// title:this
 // intitle:this
 // intitle:("this that")
 // -intitle:("this that")
 // * wild card word
 
-// lyrics, live, cover, acoustic, "full album"
-// "how to play", tutorial, lesson
+// lyrics, live, cover, acoustic, "full album", remix
+// "how to play", tutorial, lesson, learn
 // vevo, partner, official, music
 // category: music
 
