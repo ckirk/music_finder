@@ -169,7 +169,7 @@ function trackSearch(query) {
 	var searchType = "song/";
 	var sort = "&sort=song_hotttnesss-desc"; //sort=artist_familiarity-desc, artist_hotttnesss-desc, song_hotttnesss-desc, 
   var numResults = "&results=10"; // 1-100, 15 default
-  var bucket = "&bucket=audio_summary" + "&bucket=id:musicbrainz&bucket=tracks";
+  var bucket = "&bucket=audio_summary"; // + "&bucket=id:musicbrainz&bucket=tracks";
   var song_type = "&song_type=studio";
   var searchQuery = "&title=" + query; // title, artist, combined
 
@@ -177,6 +177,7 @@ function trackSearch(query) {
     url: baseURL + searchType + apiKey + sort + numResults + song_type + bucket + searchQuery,
     async: false,
     success: function(data) {
+    	allTracksFound = [];
     	tracks = data.response.songs;
     	for (var i = 0; i < tracks.length; i++) {
     		track = {
@@ -187,21 +188,35 @@ function trackSearch(query) {
     			song_id: tracks[i].id,
     			artist_id: tracks[i].artist_id
     		}
-  	    addTrackResult(track);
+
+    		// skip next track if the same
+    		if ( i == 0 ) {
+    			allTracksFound.push(track);
+    			console.log('- first track added! i= ' + i);
+    		} else if ( i > 0 && track.artist + ' ' + track.title != allTracksFound[allTracksFound.length-1].artist + ' ' + allTracksFound[allTracksFound.length-1].title) {
+    			allTracksFound.push(track);
+    			console.log('- another added! i= ' + i + allTracksFound[allTracksFound.length-1].title);
+    		} else {
+    			console.log('- duplicate skipped! i= ' + i);
+    		}
     	}
+    	addTrackResult(allTracksFound);
     }
   });
 }
 
-function addTrackResult(track) {
-	$searchResult = $('<li class="search_result">');
-	$searchResult.append('<h2>' + track.title + '</h2><h3>' + track.artist + '</h3><h3>Duration: ' + track.duration + '</h3>');
+function addTrackResult(allTracksFound) {
+	for (var i = 0; i < allTracksFound.length; i++) {
+		var track = allTracksFound[i];
+		$searchResult = $('<li class="search_result">');
+		$searchResult.append('<h2>' + track.title + '</h2><h3>' + track.artist + '</h3><h3>Duration: ' + track.duration + '</h3>');
 
-	$searchResult.data("artist", track.artist);
-	$searchResult.data("track", track.title);
-	$searchResult.data("duration", track.duration);
+		$searchResult.data("artist", track.artist);
+		$searchResult.data("track", track.title);
+		$searchResult.data("duration", track.duration);
 
-	$('.track_results').append($searchResult);
+		$('.track_results').append($searchResult);
+	}
 }
 
 
