@@ -195,7 +195,11 @@ function trackSearch(query) {
     			console.log('- first track added! i= ' + i);
     		} else if ( i > 0 && track.artist + ' ' + track.title != allTracksFound[allTracksFound.length-1].artist + ' ' + allTracksFound[allTracksFound.length-1].title) {
     			allTracksFound.push(track);
-    			console.log('- another added! i= ' + i + allTracksFound[allTracksFound.length-1].title);
+    			console.log(' ');
+    			console.log('- another added! i= ' + i);
+    			console.log(allTracksFound[allTracksFound.length-1].artist);
+    			console.log(allTracksFound[allTracksFound.length-1].title);
+    			console.log(' ');
     		} else {
     			console.log('- duplicate skipped! i= ' + i);
     		}
