@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  query_id: 1
+  result_id: 1
+  match: false
+
+two:
+  query_id: 1
+  result_id: 1
+  match: false

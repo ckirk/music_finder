@@ -11,9 +11,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20150518203001) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "queries", force: :cascade do |t|
+    t.string   "artist"
+    t.string   "album"
+    t.string   "query"
+    t.integer  "duration"
+    t.datetime "date_published"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  create_table "query_results", force: :cascade do |t|
+    t.integer  "query_id"
+    t.integer  "result_id"
+    t.boolean  "match"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "query_results", ["query_id"], name: "index_query_results_on_query_id", using: :btree
+  add_index "query_results", ["result_id"], name: "index_query_results_on_result_id", using: :btree
+
+  create_table "results", force: :cascade do |t|
+    t.integer  "order"
+    t.string   "title"
+    t.integer  "view_count",     limit: 8
+    t.integer  "like_count"
+    t.text     "description"
+    t.integer  "duration"
+    t.datetime "date_published"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+  end
 
 end
