@@ -36,128 +36,6 @@ function playSong(videoId) {
 	$('#right').prepend($player);
 }
 
-//////////////////////////////////
-// YouTube Search ////////////////
-//////////////////////////////////
-
-function searchYouTube(artist, track, originalDuration) {
-	var include = "intitle:("+artist+' '+track+")";
-	var exclude = " -intitle:live -intitle:cover -intitle:acoustic -intitle:remix";
-	var lesson =  " -intitle:tutorial -intitle:lesson -intitle:learn -intitle:'how to play' ";
-
-	// lyrics, live, cover, acoustic, "full album", remix
-	// "how to play", tutorial, lesson, learn
-
-	var baseURL = "https://www.googleapis.com/youtube/v3/search?";
-	var apiKey = "key=" + "AIzaSyBZwPgx_XPordiPUIxzetxwy5CLwFZTb40";
-	var part = "&part=snippet,id"; // options: https://developers.google.com/youtube/v3/docs/videos
-	var type = "&type=video";
-	var videoEmbeddable = "&videoEmbeddable=true";
-	var category = '&videoCategoryId=10';
-	var searchQuery = "&q=" + include + exclude + lesson + "";
-	var order = "&order=relevance"; // relevance(default), date, rating, title, videoCount, viewCount
-	var maxResults = "&maxResults=10"; // 0-50
-
-	//var topicId = "&topicId=";
-  //var publishedAfter = "&publishedAfter=" + "1970-01-01T00:00:00Z";
-
-
-	// https://www.googleapis.com/youtube/v3/search?part=snippet&q=radiohead+kid+a&key={YOUR_API_KEY}
-
-  $.ajax({
-    url: baseURL + apiKey + part + type + category + videoEmbeddable + searchQuery + order + maxResults,
-    async: false,
-    success: function(data) {
-    	results = data.items;
-    	foundVideoIds = [];
-    	for (var i = 0; i < results.length; i++) {
-    		foundVideoIds.push(results[i].id.videoId);
-    	}
-    	fetchYouTubeData(foundVideoIds, originalDuration); // get more data for each video
-    }
-  });
-}
-
-
-//////////////////////////////////
-// YouTube Video Info ////////////
-//////////////////////////////////
-
-function fetchYouTubeData(foundVideoIds, originalDuration){
-	var durationTolerance = 30; // secs
-	YouTubeResults = [];
-
-	var videoIds = "&id=" + foundVideoIds.join();
-	var apiKey = "key=" + "AIzaSyBZwPgx_XPordiPUIxzetxwy5CLwFZTb40";
-	var baseURL = "https://www.googleapis.com/youtube/v3/videos?";
-	var part = "&part=snippet,id,statistics,contentDetails"; // options: https://developers.google.com/youtube/v3/docs/videos
-
-	$.ajax({
-	  url: baseURL + apiKey + part + videoIds,
-	  async: false,
-	  success: function(data) {
-	  	results = data.items;
-	  	for (var i = 0; i < results.length; i++) {
-	  		var duration = results[i].contentDetails.duration; // PT4M15S
-	  		var video = {
-	  			title: results[i].snippet.title,
-	  			id: results[i].id,
-	  			datePublished: results[i].snippet.publishedAt,
-	  			thumbnail: results[i].snippet.thumbnails.medium.url,
-	  			categoryId: results[i].snippet.categoryId, // 10 = music
-	  			duration: convertDuration(duration), 
-	  			viewCount: results[i].statistics.viewCount,
-	  			likeCount: results[i].statistics.likeCount
-	  		}
-	  		YouTubeResults.push(video);
-	  		if ( isBetween(originalDuration, video.duration, durationTolerance) ) {
-	  			addYtResult(video);
-	  		}
-	  		playSong(YouTubeResults[0].id); // play first returned song
-	  	}
-	  }
-	});
-}
-
-// tests if video duration is close to a target value +- a tolerance (in secs)
-function isBetween(duration, target, tolerance) {  // tolerance in secs
-	var min = target - tolerance;
-	var max = target + tolerance;
-	if ( duration >= min && duration <= max ) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-function addYtResult(video) {
-	$searchResult = $('<li class="yt_search_result">');
-	$searchResult.data("id", video.id);
-	$searchResult.append('<div class="thumbnail" style="background: url(' + video.thumbnail + ') no-repeat center center; background-size: cover;">');
-	$videoInfo = $('<div class="info">');
-	$videoInfo.append('<h2>' + video.title + '</h2><h3>Date Published: ' + video.datePublished + '</h3><h3>Duration: ' + video.duration + '</h3><h3>View Count: ' + video.viewCount + '</h3><h3>Like Count: ' + video.likeCount + '</h3><h3>Category ID: ' + video.categoryId + '</h3>');
-	$searchResult.append($videoInfo);
-	$('.yt_results').append($searchResult);
-}
-
-// <div class="thumbnail" style="background: url(<%= feed_item.video.thumbnail_medium %>) no-repeat center center; background-size: cover;">
-
-
-// convert duration from PTMS -> seconds
-
-function convertDuration(input) {
-	var regex = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
-	var hours = 0, minutes = 0, seconds = 0, totalseconds;
-	if (regex.test(input)) {
-	  var matches = regex.exec(input);
-	  if (matches[1]) hours = Number(matches[1]);
-	  if (matches[2]) minutes = Number(matches[2]);
-	  if (matches[3]) seconds = Number(matches[3]);
-	  totalseconds = hours * 3600  + minutes * 60 + seconds;
-	}
-	return totalseconds;
-}
-
 
 //////////////////////////////////
 // TRACK RESULTS (EchoNest) //////
@@ -190,19 +68,21 @@ function trackSearch(query) {
     		}
 
     		// skip next track if the same
-    		if ( i == 0 ) {
-    			allTracksFound.push(track);
-    			console.log('- first track added! i= ' + i);
-    		} else if ( i > 0 && track.artist + ' ' + track.title != allTracksFound[allTracksFound.length-1].artist + ' ' + allTracksFound[allTracksFound.length-1].title) {
-    			allTracksFound.push(track);
-    			console.log(' ');
-    			console.log('- another added! i= ' + i);
-    			console.log(allTracksFound[allTracksFound.length-1].artist);
-    			console.log(allTracksFound[allTracksFound.length-1].title);
-    			console.log(' ');
-    		} else {
-    			console.log('- duplicate skipped! i= ' + i);
-    		}
+    		allTracksFound.push(track); //remove me if skipping dupes
+
+    		// if ( i == 0 ) {
+    		// 	allTracksFound.push(track);
+    		// 	console.log('- first track added! i= ' + i);
+    		// } else if ( i > 0 && track.artist + ' ' + track.title != allTracksFound[allTracksFound.length-1].artist + ' ' + allTracksFound[allTracksFound.length-1].title) {
+    		// 	allTracksFound.push(track);
+    		// 	console.log(' ');
+    		// 	console.log('- another added! i= ' + i);
+    		// 	console.log(allTracksFound[allTracksFound.length-1].artist);
+    		// 	console.log(allTracksFound[allTracksFound.length-1].title);
+    		// 	console.log(' ');
+    		// } else {
+    		// 	console.log('- duplicate skipped! i= ' + i);
+    		// }
     	}
     	addTrackResult(allTracksFound);
     }
