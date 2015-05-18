@@ -40,8 +40,6 @@ group :development, :test do
   gem 'spring'
   gem 'rails-dev-tweaks', '~> 1.1'
   gem 'quiet_assets', '~> 1.0.3'  
-
-  gem 'sqlite3'
   
   # Debugging tools
   gem 'better_errors', '~> 2.0.0'           # improved error information

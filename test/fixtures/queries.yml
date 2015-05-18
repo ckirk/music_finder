@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  artist: MyString
+  album: MyString
+  query: MyString
+  duration: 1
+  date_published: 2015-05-18 16:25:58
+
+two:
+  artist: MyString
+  album: MyString
+  query: MyString
+  duration: 1
+  date_published: 2015-05-18 16:25:58

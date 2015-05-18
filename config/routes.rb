@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
 
+  get 'query_results/create'
+
+  get 'results/create'
+
+  get 'queries/create'
+
   root 'main#index'
 
   get 'search'   => 'main#search'
