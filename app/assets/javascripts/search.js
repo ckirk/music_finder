@@ -1,6 +1,6 @@
 
 $(document).ready(function(){
-	$('form').submit(false); // prevent form from submitting
+	$('.no_submit').submit(false); // prevent form from submitting
 
 	// Initiate search -> return results
 	$('#searchButton').click(function(){
@@ -24,6 +24,8 @@ $(document).ready(function(){
 	// Play selected YT video from YT search results
 	$(document).on('click', '.yt_search_result', function(){
 	  var videoId = $(this).data('id');
+    $('.yt_search_result').removeClass('bestMatch');
+    $(this).addClass('bestMatch');
 	  playSong(videoId);
 	});
 
