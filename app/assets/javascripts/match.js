@@ -6,8 +6,8 @@ match.js
 
 function searchYouTube(artist, track, originalDuration) {
 	var include = "intitle:("+artist+' '+track+")";
-	var exclude = " -intitle:live -intitle:cover -intitle:acoustic -intitle:remix";
-	var lesson =  " -intitle:tutorial -intitle:lesson -intitle:learn -intitle:'how to play' ";
+	//var exclude = " -intitle:live -intitle:cover -intitle:acoustic -intitle:remix";
+	//var lesson =  " -intitle:tutorial -intitle:lesson -intitle:learn -intitle:'how to play' ";
 
 	// lyrics, live, cover, acoustic, "full album", remix
 	// "how to play", tutorial, lesson, learn
@@ -18,7 +18,7 @@ function searchYouTube(artist, track, originalDuration) {
 	var type = "&type=video";
 	var videoEmbeddable = "&videoEmbeddable=true";
 	var category = '&videoCategoryId=10';
-	var searchQuery = "&q=" + include; //+ exclude + lesson + "";
+	var searchQuery = "&q=" + include; //+ exclude + lesson;
 	var order = "&order=relevance"; // relevance(default), date, rating, title, videoCount, viewCount
 	var maxResults = "&maxResults=10"; // 0-50
 
@@ -193,6 +193,7 @@ function addYtResult(video) {
 	$videoInfo = $('<div class="info">');
 	$videoInfo.append('<h2>' + video.title + '</h2><h3>Date Published: ' + video.datePublished + '</h3><h3>Duration: ' + video.duration + '</h3><h3>View Count: ' + video.viewCount + '</h3><h3>Like Count: ' + video.likeCount + '</h3><h3>Category ID: ' + video.categoryId + '</h3>');
 	$searchResult.append($videoInfo);
+	$searchResult.prepend('<div class="match">BEST MATCH!!!</div>');
 	$('.yt_results').append($searchResult);
 }
 

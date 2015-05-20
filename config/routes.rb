@@ -1,14 +1,9 @@
 Rails.application.routes.draw do
 
-  get 'query_results/create'
-
-  get 'results/create'
-
-  get 'queries/create'
-
   root 'main#index'
-
   get 'search'   => 'main#search'
+
+  resources :queries
 
 
   # The priority is based upon order of creation: first created -> highest priority.
