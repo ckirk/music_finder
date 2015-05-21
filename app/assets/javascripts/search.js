@@ -1,43 +1,6 @@
-
-$(document).ready(function(){
-	$('.no_submit').submit(false); // prevent form from submitting
-
-	// Initiate search -> return results
-	$('#searchButton').click(function(){
-		var query = $('#searchQuery').val();
-		$('.results').html('');
-		artistSearch(query);
-		trackSearch(query);
-		albumSearch(query);
-		MbTrackSearch(query);
-	});
-
-	// Return YT search results for selected track, autoplay first result
-	$(document).on('click', '.search_result', function(){
-		$('.yt_results').html('');
-	  var artist = $(this).data('artist');
-	  var track = $(this).data('track');
-	  var originalDuration = $(this).data('duration');
-	  searchYouTube(artist, track, originalDuration);
-	});
-
-	// Play selected YT video from YT search results
-	$(document).on('click', '.yt_search_result', function(){
-	  var videoId = $(this).data('id');
-    $('.yt_search_result').removeClass('bestMatch');
-    $(this).addClass('bestMatch');
-	  playSong(videoId);
-	});
-
-});
-
-function playSong(videoId) {
-	$('#yt_player').remove();
-	$player = $('<div id="yt_player">');
-	$player.html('<iframe width="600" height="337" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0" frameborder="0" allowfullscreen></iframe>');
-	$('#right').prepend($player);
-}
-
+// search.js
+// use search query to return search results
+// display search results on page
 
 //////////////////////////////////
 // TRACK RESULTS (EchoNest) //////

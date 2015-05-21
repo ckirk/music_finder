@@ -1,9 +1,11 @@
-match.js
+//match.js
+// use track data to find ideal youtube video
 
 //////////////////////////////////
 // YouTube Search ////////////////
 //////////////////////////////////
 
+// use track data to search youtube
 function searchYouTube(artist, track, originalDuration) {
 	var include = "intitle:("+artist+' '+track+")";
 	//var exclude = " -intitle:live -intitle:cover -intitle:acoustic -intitle:remix";
@@ -48,7 +50,6 @@ function searchYouTube(artist, track, originalDuration) {
 //////////////////////////////////
 
 // grab more information about each video for each yt search result
-
 function fetchYouTubeData(foundVideoIds, originalDuration){
 	var durationTolerance = 30; // secs
 	YouTubeResults = [];
@@ -74,6 +75,8 @@ function fetchYouTubeData(foundVideoIds, originalDuration){
 	  			duration: convertDuration(duration), 
 	  			viewCount: results[i].statistics.viewCount,
 	  			likeCount: results[i].statistics.likeCount,
+	  			resultOrder: i+1,
+	  			match: undefined,
 	  			matchScore: 0
 	  		}
 	  		if ( isBetween(originalDuration, video.duration, durationTolerance) ) {
@@ -87,6 +90,7 @@ function fetchYouTubeData(foundVideoIds, originalDuration){
 	});
 }
 
+// evaluate each youtube search result and assign a "matchScore"
 function matchScore(YouTubeResults, originalDuration) {
 	// get max/min values
 	maxViewCount = getMax(YouTubeResults, "viewCount");
@@ -162,6 +166,11 @@ function matchScore(YouTubeResults, originalDuration) {
 	}
 }
 
+//////////////////////
+// Helper Functions //
+//////////////////////
+
+// get maximum value for an attribute in an array of objects
 function getMax(array, attribute) {
 	var max = 0;
 	var tmp;
@@ -174,34 +183,7 @@ function getMax(array, attribute) {
 	return max;
 }
 
-// tests if video duration is close to a target value +- a tolerance (in secs)
-function isBetween(duration, target, tolerance) {  // tolerance in secs
-	var min = target - tolerance;
-	var max = target + tolerance;
-	if ( duration >= min && duration <= max ) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-// * //
-function addYtResult(video) {
-	$searchResult = $('<li class="yt_search_result">');
-	$searchResult.data("id", video.id);
-	$searchResult.append('<div class="thumbnail" style="background: url(' + video.thumbnail + ') no-repeat center center; background-size: cover;">');
-	$videoInfo = $('<div class="info">');
-	$videoInfo.append('<h2>' + video.title + '</h2><h3>Date Published: ' + video.datePublished + '</h3><h3>Duration: ' + video.duration + '</h3><h3>View Count: ' + video.viewCount + '</h3><h3>Like Count: ' + video.likeCount + '</h3><h3>Category ID: ' + video.categoryId + '</h3>');
-	$searchResult.append($videoInfo);
-	$searchResult.prepend('<div class="match">BEST MATCH!!!</div>');
-	$('.yt_results').append($searchResult);
-}
-
-// <div class="thumbnail" style="background: url(<%= feed_item.video.thumbnail_medium %>) no-repeat center center; background-size: cover;">
-
-
 // convert duration from PTMS -> seconds
-
 function convertDuration(input) {
 	var regex = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
 	var hours = 0, minutes = 0, seconds = 0, totalseconds;
@@ -213,4 +195,15 @@ function convertDuration(input) {
 	  totalseconds = hours * 3600  + minutes * 60 + seconds;
 	}
 	return totalseconds;
+}
+
+// tests if video duration is close to a target value +- a tolerance (in secs)
+function isBetween(duration, target, tolerance) {  // tolerance in secs
+	var min = target - tolerance;
+	var max = target + tolerance;
+	if ( duration >= min && duration <= max ) {
+		return true;
+	} else {
+		return false;
+	}
 }
