@@ -30,6 +30,9 @@
     <th>Title</th>
     <th>Duration</th>
     <th>View Count</th>
+    <th>Like Count</th>
+    <th>query_id</th>
+    <th>Match</th>
   </tr>
  
   <% @results.each do |result| %>
@@ -37,6 +40,9 @@
       <td><%= result.title %></td>
       <td><%= result.duration %></td>
       <td><%= result.view_count %></td>
+      <td><%= result.like_count %></td>
+      <td><%= result.query_id %></td>
+      <td><%= result.match %></td>
     </tr>
   <% end %>
 </table>

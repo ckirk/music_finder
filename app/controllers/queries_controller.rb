@@ -58,9 +58,9 @@ class QueriesController < ApplicationController
           view_count: result["viewCount"],
           like_count: result["likeCount"],
           order: result["resultOrder"],
-          description: result["description"]
-          #match: boolean,
-          #query_id: id,
+          description: result["description"],
+          match: result["match"],
+          query_id: @query.id
           #category: results["categoryId"],
           #results["matchScore"]
         )
