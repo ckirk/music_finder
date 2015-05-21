@@ -73,11 +73,13 @@ $(document).ready(function(){
 	    type: "POST",
 	    //dataType: 'json',
 	    //contentType: 'application/json',
-	    data: { query: { query: "Chris", duration: 666 } },
+	    data: {'trainingSet': JSON.stringify(trainingSet)},
+	    //{ query: { query: "Chris", duration: 666 } },
 	    success: function(data) {
 	    	//alert(data);
 	    	alert("success!");
 	    	console.log(data);
+	    	console.log(JSON.stringify(trainingSet));
 	    },
 	    error: function( jqXhr, textStatus, errorThrown ) {
 	      //console.log( errorThrown );
