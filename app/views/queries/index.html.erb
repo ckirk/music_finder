@@ -32,7 +32,11 @@
     <th>View Count</th>
     <th>Like Count</th>
     <th>query_id</th>
-    <th>Match</th>
+    <th>Date Published</th>
+    <th>Result Order</th>
+    <th>category</th>
+    <th>video_id</th>
+    <th>Match?</th>
   </tr>
  
   <% @results.each do |result| %>
@@ -42,6 +46,10 @@
       <td><%= result.view_count %></td>
       <td><%= result.like_count %></td>
       <td><%= result.query_id %></td>
+      <td><%= result.date_published %></td>
+      <td><%= result.order %></td>
+      <td><%= result.category %></td>
+      <td><%= result.video_id %></td>
       <td><%= result.match %></td>
     </tr>
   <% end %>

@@ -60,9 +60,9 @@ class QueriesController < ApplicationController
           order: result["resultOrder"],
           description: result["description"],
           match: result["match"],
-          query_id: @query.id
-          #category: results["categoryId"],
-          #results["matchScore"]
+          query_id: @query.id,
+          category: result["categoryId"],
+          video_id: result["id"]
         )
         unless @result.save
           render :json => { response: "failed to save result" }, :status => 500

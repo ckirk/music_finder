@@ -31,7 +31,7 @@ function searchYouTube(artist, track, originalDuration) {
 	// https://www.googleapis.com/youtube/v3/search?part=snippet&q=radiohead+kid+a&key={YOUR_API_KEY}
 
   $.ajax({
-    url: baseURL + apiKey + part + type + category + videoEmbeddable + searchQuery + order + maxResults,
+    url: baseURL + apiKey + part + type + videoEmbeddable + searchQuery + order + maxResults,
     async: false,
     success: function(data) {
     	results = data.items;
@@ -68,6 +68,7 @@ function fetchYouTubeData(foundVideoIds, originalDuration){
 	  		var duration = results[i].contentDetails.duration; // PT4M15S
 	  		var video = {
 	  			title: results[i].snippet.title,
+	  			description: results[i].snippet.description,
 	  			id: results[i].id,
 	  			datePublished: results[i].snippet.publishedAt,
 	  			thumbnail: results[i].snippet.thumbnails.medium.url,
@@ -79,8 +80,8 @@ function fetchYouTubeData(foundVideoIds, originalDuration){
 	  			match: undefined,
 	  			matchScore: 0
 	  		}
-	  		if ( isBetween(originalDuration, video.duration, durationTolerance) ) {
-	  		}
+	  		//if ( isBetween(originalDuration, video.duration, durationTolerance) ) {
+	  		//}
 	  		YouTubeResults.push(video);
 	  		addYtResult(video);
 	  	}
