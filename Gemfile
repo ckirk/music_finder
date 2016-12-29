@@ -47,6 +47,7 @@ group :development, :test do
   gem 'meta_request', '~> 0.3.4'            # required for RailsPanel (chrome extension) to work
   gem 'bullet', '~> 4.14.0'                 # tests for N+1 query problems
   gem 'pry-rails', '~> 0.3.2'
+  gem 'hirb', '~> 0.7.3' 
 end
 
 group :production do
